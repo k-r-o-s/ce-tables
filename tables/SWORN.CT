@@ -4,7 +4,8 @@
     <CheatEntry>
       <ID>770</ID>
       <Description>"→ Enable (Auto-Attach Game Process) 自动附加游戏进程"</Description>
-      <LastState Activated="1"/>
+      <Options moHideChildren="1"/>
+      <LastState/>
       <VariableType>Auto Assembler Script</VariableType>
       <AssemblerScript>[ENABLE]
 {$lua}
@@ -16,7 +17,8 @@ OpenProcess("SWORN.exe")
         <CheatEntry>
           <ID>769</ID>
           <Description>"→ Initialize Mono 初始化符号信息"</Description>
-          <LastState Activated="1"/>
+          <Options moHideChildren="1"/>
+          <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>[ENABLE]
 
@@ -34,7 +36,7 @@ LaunchMonoDataCollector()
             <CheatEntry>
               <ID>811</ID>
               <Description>"Always Spawn Legendary Blessings 祝福永远是史诗品质 (F3 开启 F4 关闭)"</Description>
-              <LastState Activated="1"/>
+              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>//Send@FearlessRevolution|Sintrix
 [ENABLE]
@@ -88,7 +90,7 @@ dealloc(*)
               <ID>808</ID>
               <Description>"Set Gold On Gain/Spend 金币获取/消耗时设置为此值 (F3 开启 F4 关闭)"</Description>
               <Options moHideChildren="1"/>
-              <LastState Activated="1"/>
+              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version:
@@ -174,7 +176,7 @@ dealloc(newmem)
             <CheatEntry>
               <ID>822</ID>
               <Description>"Infinite dice 骰子不消耗 (F3 开启 F4 关闭)"</Description>
-              <LastState Activated="1"/>
+              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version:
@@ -475,7 +477,7 @@ GameAssembly.dll+D79002: 4D 8B 81 60 05 00 00  - mov r8,[r9+00000560]
             <CheatEntry>
               <ID>800</ID>
               <Description>"Instant Complete Luna Blossom 采水浇花事件直接完成"</Description>
-              <LastState Activated="1"/>
+              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>//Send@FearlessRevolution|Sintrix
 [ENABLE]
@@ -512,7 +514,7 @@ dealloc(*)
             <CheatEntry>
               <ID>823</ID>
               <Description>"Fire charge not decrease 火焰充能不消耗"</Description>
-              <LastState Activated="1"/>
+              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version: 
@@ -659,7 +661,7 @@ GameAssembly.dll+C0D649: 48 8B 4B 70        - mov rcx,[rbx+70]
             <CheatEntry>
               <ID>828</ID>
               <Description>"Scythe max seeds 镰刀种子总是最大"</Description>
-              <LastState Activated="1"/>
+              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version: 
