@@ -5,7 +5,6 @@
       <ID>770</ID>
       <Description>"→ Enable (Auto-Attach Game Process) 自动附加游戏进程"</Description>
       <Options moHideChildren="1"/>
-      <LastState/>
       <VariableType>Auto Assembler Script</VariableType>
       <AssemblerScript>[ENABLE]
 {$lua}
@@ -18,7 +17,6 @@ OpenProcess("SWORN.exe")
           <ID>769</ID>
           <Description>"→ Initialize Mono 初始化符号信息"</Description>
           <Options moHideChildren="1"/>
-          <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>[ENABLE]
 
@@ -36,7 +34,6 @@ LaunchMonoDataCollector()
             <CheatEntry>
               <ID>811</ID>
               <Description>"Always Spawn Legendary Blessings 祝福永远是史诗品质 (F3 开启 F4 关闭)"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>//Send@FearlessRevolution|Sintrix
 [ENABLE]
@@ -90,7 +87,6 @@ dealloc(*)
               <ID>808</ID>
               <Description>"Set Gold On Gain/Spend 金币获取/消耗时设置为此值 (F3 开启 F4 关闭)"</Description>
               <Options moHideChildren="1"/>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version:
@@ -102,7 +98,7 @@ dealloc(*)
 
 [ENABLE]
 
-aobscanmodule(gold,GameAssembly.dll,CF 02 00 00 8B 94 24 80 00 00 00 48 63 C5 48 03 C0 89 54 C6 2C B0 01) // should be unique
+aobscanmodule(gold,GameAssembly.dll,CE 02 00 00 8B 94 24 80 00 00 00 48 63 C5 48 03 C0 89 54 C6 2C B0 01) // should be unique
 alloc(newmem,$1000,gold)
 
 label(code)
@@ -176,7 +172,6 @@ dealloc(newmem)
             <CheatEntry>
               <ID>822</ID>
               <Description>"Infinite dice 骰子不消耗 (F3 开启 F4 关闭)"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version:
@@ -265,7 +260,6 @@ GameAssembly.dll+B9F46F: 8B 79 40              - mov edi,[rcx+40]
             <CheatEntry>
               <ID>788</ID>
               <Description>"Infinite Health 无限生命 (F1)"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>//Send@FearlessRevolution|Sintrix
 
@@ -316,36 +310,70 @@ dealloc(*)
             <CheatEntry>
               <ID>804</ID>
               <Description>"Infinite Mana 无限魔法 (F2)"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
-              <AssemblerScript>//Send@FearlessRevolution|Sintrix
+              <AssemblerScript>{ Game  : SWORN.exe
+  Version:
+  Date   : 2025-07-28
+  Author : tao
+
+  This script does blah blah blah
+}
+
 [ENABLE]
 
-aobscanmodule(mana,GameAssembly.dll,48 89 5C 24 08 57 48 83 EC 60 80 B9 A0)
-alloc(newmem,$1000,mana)
+aobscanmodule(mana_use,GameAssembly.dll,F3 0F 11 73 78 7A) // should be unique
+alloc(newmem,$1000,mana_use)
 
 label(code)
 label(return)
 
 newmem:
-mov [rcx+70],(float)2
+
 code:
-  mov [rsp+08],rbx
+//  movss [rbx+78],xmm6
+  mov [rbx+78] (float)2
   jmp return
 
-mana:
+mana_use:
   jmp newmem
 return:
-registersymbol(mana)
+registersymbol(mana_use)
 
 [DISABLE]
 
-mana:
-  db 48 89 5C 24 08
+mana_use:
+  db F3 0F 11 73 78
 
-unregistersymbol(*)
-dealloc(*)
+unregistersymbol(mana_use)
+dealloc(newmem)
 
+{
+// ORIGINAL CODE - INJECTION POINT: GameAssembly.dll+BBBF98
+
+GameAssembly.dll+BBBF79: E8 62 F8 FF FF        - call ManaStats.get_MaxMana
+GameAssembly.dll+BBBF7E: 45 0F 57 C9           - xorps xmm9,xmm9
+GameAssembly.dll+BBBF82: 44 0F 2F CE           - comiss xmm9,xmm6
+GameAssembly.dll+BBBF86: 77 0A                 - ja GameAssembly.dll+BBBF92
+GameAssembly.dll+BBBF88: 0F 2F F0              - comiss xmm6,xmm0
+GameAssembly.dll+BBBF8B: 76 08                 - jna GameAssembly.dll+BBBF95
+GameAssembly.dll+BBBF8D: 0F 28 F0              - movaps xmm6,xmm0
+GameAssembly.dll+BBBF90: EB 03                 - jmp GameAssembly.dll+BBBF95
+GameAssembly.dll+BBBF92: 0F 57 F6              - xorps xmm6,xmm6
+GameAssembly.dll+BBBF95: 0F 2E F7              - ucomiss xmm6,xmm7
+// ---------- INJECTING HERE ----------
+GameAssembly.dll+BBBF98: F3 0F 11 73 78        - movss [rbx+78],xmm6
+// ---------- DONE INJECTING  ----------
+GameAssembly.dll+BBBF9D: 7A 02                 - jp GameAssembly.dll+BBBFA1
+GameAssembly.dll+BBBF9F: 74 1D                 - je GameAssembly.dll+BBBFBE
+GameAssembly.dll+BBBFA1: 48 8B 8B 88 00 00 00  - mov rcx,[rbx+00000088]
+GameAssembly.dll+BBBFA8: 48 85 C9              - test rcx,rcx
+GameAssembly.dll+BBBFAB: 74 11                 - je GameAssembly.dll+BBBFBE
+GameAssembly.dll+BBBFAD: 48 8B 41 18           - mov rax,[rcx+18]
+GameAsembly.dll+BBBFB1: 0F 28 CE              - movaps xmm1,xmm6
+GameAssembly.dll+BBBFB4: 4C 8B 41 28           - mov r8,[rcx+28]
+GameAssembly.dll+BBBFB8: 48 8B 49 40           - mov rcx,[rcx+40]
+GameAssembly.dll+BBBFBC: FF D0                 - call rax
+}
 </AssemblerScript>
               <Hotkeys>
                 <Hotkey>
@@ -362,7 +390,6 @@ dealloc(*)
             <CheatEntry>
               <ID>790</ID>
               <Description>"Two Hit Kill 敌人受两击就死"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>//Send@FearlessRevolution|Sintrix
 //PlayerStatsManager.AddDamageDealt
@@ -403,7 +430,6 @@ dealloc(*)
             <CheatEntry>
               <ID>793</ID>
               <Description>"Set Resources (Press Tab) 按 Tab 时设置资源值"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version:
@@ -477,7 +503,6 @@ GameAssembly.dll+D79002: 4D 8B 81 60 05 00 00  - mov r8,[r9+00000560]
             <CheatEntry>
               <ID>800</ID>
               <Description>"Instant Complete Luna Blossom 采水浇花事件直接完成"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>//Send@FearlessRevolution|Sintrix
 [ENABLE]
@@ -514,7 +539,6 @@ dealloc(*)
             <CheatEntry>
               <ID>823</ID>
               <Description>"Fire charge not decrease 火焰充能不消耗"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version: 
@@ -588,7 +612,6 @@ GameAssembly.dll+175D9FB: 48 8B 90 C0 00 00 00  - mov rdx,[rax+000000C0]
             <CheatEntry>
               <ID>825</ID>
               <Description>"Max fury with one hit 一次击中获得满层愤怒"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version: 
@@ -661,7 +684,6 @@ GameAssembly.dll+C0D649: 48 8B 4B 70        - mov rcx,[rbx+70]
             <CheatEntry>
               <ID>828</ID>
               <Description>"Scythe max seeds 镰刀种子总是最大"</Description>
-              <LastState/>
               <VariableType>Auto Assembler Script</VariableType>
               <AssemblerScript>{ Game   : SWORN.exe
   Version: 
@@ -740,31 +762,26 @@ GameAssembly.dll+C8FCB4: 74 21                 - je GameAssembly.dll+C8FCD7
     <CheatEntry>
       <ID>459</ID>
       <Description>"--------------------------------"</Description>
-      <LastState Value="" RealAddress="00000000"/>
       <GroupHeader>1</GroupHeader>
     </CheatEntry>
     <CheatEntry>
       <ID>461</ID>
       <Description>"⚡Original author 原作者: Send"</Description>
-      <LastState Value="" RealAddress="00000000"/>
       <GroupHeader>1</GroupHeader>
     </CheatEntry>
     <CheatEntry>
       <ID>827</ID>
       <Description>"⚡Updated by 更新者: Kros"</Description>
-      <LastState Value="" RealAddress="00000000"/>
       <GroupHeader>1</GroupHeader>
     </CheatEntry>
     <CheatEntry>
       <ID>454</ID>
       <Description>"⚡Version 版本: SWORN.exe v0.51.1.1.593"</Description>
-      <LastState Value="" RealAddress="00000000"/>
       <GroupHeader>1</GroupHeader>
     </CheatEntry>
     <CheatEntry>
       <ID>460</ID>
       <Description>"⚡Send's Discord "</Description>
-      <LastState/>
       <VariableType>Auto Assembler Script</VariableType>
       <AssemblerScript>[ENABLE]
 
@@ -780,7 +797,6 @@ shellExecute("https://discord.gg/NTFcdAUWxb")
     <CheatEntry>
       <ID>458</ID>
       <Description>"--------------------------------"</Description>
-      <LastState Value="" RealAddress="00000000"/>
       <GroupHeader>1</GroupHeader>
     </CheatEntry>
   </CheatEntries>
