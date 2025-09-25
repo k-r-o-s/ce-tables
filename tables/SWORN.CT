@@ -452,7 +452,7 @@ GameAssembly.dll+9F5392: 74 1F                    - je GameAssembly.dll+9F53B3
               <AssemblerScript>{ Game  : SWORN.exe
   Version:
   Date   : 2025-07-28
-  Author : tao
+  Author : kros
 
   This script does blah blah blah
 }
